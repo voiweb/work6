@@ -1,6 +1,39 @@
 const loadAllItems = require('./loadAllItems.js');
 
-module.exports = function main() {
-    console.log("Debug Info");
-    return 'Hello World!';
+module.exports = function main(inputs) {
+    
+	var items = loadAllItems(),
+		sumArr = [],                      
+		output = '***<没钱赚商店>购物清单***\n';
+
+	for(let i=0; i< inputs.length;i++){
+		let barcode = inputs[i];
+		if(undefined===sumArr[barcode]){  
+			sumArr[barcode] = 1;      
+		}else{
+			sumArr[barcode]++;
+		}
+	}
+	
+	let totalPrice = 0;
+	for(let i=0; i<items.length;i++){
+		let item = items[i],
+			barcode = item.barcode,
+			name = item.name,
+			unit = item.unit,
+			price = item.price,
+			sum = sumArr[barcode];
+		if(undefined===sum) continue;    
+		let total = (sum*price).toFixed(2);
+		totalPrice += parseFloat(total);
+		price = price.toFixed(2);
+		output += `名称：${name}，数量：${sum}${unit}，单价：${price}(元)，小计：${total}(元)\n`; 
+	}
+	totalPrice = totalPrice.toFixed(2);
+	output += '----------------------\n';
+	output += `总计：${totalPrice}(元)\n`;
+	output += '**********************';
+	
+	console.log(output,totalPrice);
+    return output;
 };
